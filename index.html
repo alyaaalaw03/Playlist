@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Tarayıcı Sekmesinde Yazan Başlık -->
+    <title>Playlist</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f4efe6;
+            color: #4a3e3d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .muzik-kutu {
+            background: #fdfbf7;
+            border: 2px solid #e2d7c5;
+            padding: 25px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(110, 89, 74, 0.1);
+            text-align: center;
+        }
+        h1 {
+            font-family: 'Caveat', cursive;
+            font-size: 42px;
+            color: #7c5c43;
+            margin-bottom: 5px;
+        }
+        .alt-baslik {
+            font-size: 13px;
+            color: #a08c7d;
+            margin-bottom: 15px;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .dosya-sec-btn {
+            background: #8c6d53;
+            color: #fdfbf7;
+            padding: 10px 16px;
+            border-radius: 16px;
+            cursor: pointer;
+            display: inline-block;
+            margin: 5px;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(140, 109, 83, 0.2);
+        }
+        .dosya-sec-btn:active {
+            transform: scale(0.98);
+            background: #735740;
+        }
+        .su-anki-sarki {
+            font-family: 'Caveat', cursive;
+            font-size: 22px;
+            color: #5c4333;
+            margin: 10px 0;
+            min-height: 30px;
+            word-break: break-word;
+        }
+        .kontrol-panel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #e8dfd1;
+            color: #5c4333;
+            border: none;
+            padding: 9px 13px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Quicksand', sans-serif;
+        }
+        button:active {
+            background: #d4c5b3;
+        }
+        button.aktif {
+            background: #7c5c43;
+            color: white;
+        }
+        .playlist-alani {
+            margin-top: 15px;
+            text-align: left;
+            background: #f7f2e9;
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid #ebdccb;
+        }
+        .playlist-baslik {
+            font-family: 'Caveat', cursive;
+            font-size: 24px;
+            color: #7c5c43;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sarki-listesi {
+            list-style: none;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .sarki-item {
+            padding: 8px 10px;
+            font-size: 13px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #6e594a;
+        }
+        .sarki-item:hover, .sarki-item.caliyor {
+            background: #e2d7c5;
+            color: #3b2c23;
+            font-weight: bold;
+        }
+        .kayit-alani {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
+            flex-direction: column;
+        }
+        .input-grup {
+            display: flex;
+            gap: 5px;
+        }
+        .kayit-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #e2d7c5;
+            border-radius: 8px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 12px;
+            outline: none;
+        }
+        .paylasim-butonlari {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .paylasim-butonlari button {
+            flex: 1;
+            font-size: 11px;
+            padding: 8px;
+            background: #d3c4b1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="muzik-kutu">
+        <!-- Sayfanın Ortasındaki Başlık -->
+        <h1>🌿 Playlist</h1>
+        <div class="alt-baslik">Kendi Çalma Listeni Oluştur ve Paylaş</div>
+        
+        <!-- Şarkı ve Liste Yükleme Butonları -->
+        <div>
+            <label for="muzikDosya" class="dosya-sec-btn">➕ Şarkı Ekle</label>
+            <input type="file" id="muzikDosya" multiple>
+
+            <label for="jsonYukle" class="dosya-sec-btn" style="background: #a08c7d;">📥 Liste Yükle (.json)</label>
+            <input type="file" id="jsonYukle" accept=".json">
+        </div>
+        
+        <div class="su-anki-sarki" id="sarkiad">Henüz müzik seçilmedi</div>
+
+        <audio id="sesOynatici"></audio>
+
+        <!-- Oynatma Kontrolleri -->
+        <div class="kontrol-panel">
+            <button onclick="oncekiSarki()">⏮️</button>
+            <button onclick="muzikOynat()">▶️</button>
+            <button onclick="muzikDurdur()">⏸️</button>
+            <button onclick="sonrakiSarki()">⏭️</button>
+        </div>
+
+        <div class="kontrol-panel">
+            <button id="mixBtn" onclick="mixModuDegistir()">🔀 Mix: Kapalı</button>
+            <button onclick="sesSustur()" id="sessizBtn">🔊 Ses Açık</button>
+        </div>
+
+        <!-- Çalma Listesi Alanı -->
+        <div class="playlist-alani">
+            <div class="playlist-baslik">
+                <span id="listeBaslikMetni">📜 Çalma Listem</span>
+            </div>
+            
+            <ul class="sarki-listesi" id="listeKutusu">
+                <li style="font-size: 12px; color: #a08c7d;">Lütfen müzik ekleyin...</li>
+            </ul>
+
+            <!-- Kayıt, Dışa Aktar ve Paylaşım Alanı -->
+            <div class="kayit-alani">
+                <div class="input-grup">
+                    <input type="text" id="listeAdiInput" class="kayit-input" placeholder="Liste Adı (Örn: Favorilerim)">
+                    <button onclick="listeyiKaydet()" style="background: #8c6d53; color: white;">💾 Kaydet</button>
+                </div>
+
+                <div class="paylasim-butonlari">
+                    <button onclick="listeyiIndir()">📤 Listeyi İndir (.json)</button>
+                    <button onclick="linkUret()">🔗 Link Üret & Kopyala</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dosyaGirdisi = document.getElementById('muzikDosya');
+        const jsonYukleGirdisi = document.getElementById('jsonYukle');
+        const sesOynatici = document.getElementById('sesOynatici');
+        const sarkiAdMetni = document.getElementById('sarkiad');
+        const listeKutusu = document.getElementById('listeKutusu');
+        const listeBaslikMetni = document.getElementById('listeBaslikMetni');
+        const listeAdiInput = document.getElementById('listeAdiInput');
+        const mixBtn = document.getElementById('mixBtn');
+        const sessizBtn = document.getElementById('sessizBtn');
+
+        let playlist = [];
+        let mevcutIndex = 0;
+        let mixModu = false;
+
+        window.onload = function() {
+            // 1. Önce URL'den (link üzerinden) gelen liste var mı bak
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlData = urlParams.get('playlist');
+
+            if (urlData) {
+                try {
+                    const cozulmusData = JSON.parse(decodeURIComponent(urlData));
+                    listeBaslikMetni.innerText = "📜 " + cozulmusData.isim;
+                    listeAdiInput.value = cozulmusData.isim;
+                    playlist = cozulmusData.sarkilar.map(name => ({ name: name, file: null, url: "" }));
+                    listeyiCiz();
+                    alert("Link üzerinden '" + cozulmusData.isim + "' listesi yüklendi! Lütfen kendi cihazınızdaki müzik dosyalarını ekleyin.");
+                    return;
+                } catch(e) {
+                    console.log("Link verisi okunamadı.");
+                }
+            }
+
+            // 2. Link yoksa yerel hafızadaki listeyi yükle
+            kayitliListeyiYukle();
+        };
+
+        // Dosya seçildiğinde listeye ekle
+        dosyaGirdisi.addEventListener('change', function(e) {
+            const yeniDosyalar = Array.from(e.target.files);
+            
+            yeniDosyalar.forEach(dosya => {
+                const mevcutSarki = playlist.find(p => p.name === dosya.name);
+                if (mevcutSarki) {
+                    mevcutSarki.file = dosya;
+                    mevcutSarki.url = URL.createObjectURL(dosya);
+                } else {
+                    playlist.push({
+                        name: dosya.name,
+                        file: dosya,
+                        url: URL.createObjectURL(dosya)
+                    });
+                }
+            });
+
+            if (playlist.length > 0) {
+                listeyiCiz();
+                if (!sesOynatici.src && playlist[0].url) {
+                    sarkiCal(0);
+                }
+            }
+        });
+
+        // Dışarıdan .json dosyası yüklendiğinde
+        jsonYukleGirdisi.addEventListener('change', function(e) {
+            const dosya = e.target.files[0];
+            if (!dosya) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const veri = JSON.parse(event.target.result);
+                    if (veri.isim && veri.sarkilar) {
+                        listeBaslikMetni.innerText = "📜 " + veri.isim;
+                        listeAdiInput.value = veri.isim;
+                        playlist = veri.sarkilar.map(name => ({ name: name, file: null, url: "" }));
+                        listeyiCiz();
+                        alert("'" + veri.isim + "' dosyası başarıyla yüklendi! Seslerin çalması için cihazınızdan ilgili MP3 dosyalarını ekleyebilirsiniz.");
+                    }
+                } catch(err) {
+                    alert("Geçersiz liste dosyası!");
+                }
+            };
+            reader.readAsText(dosya);
+        });
+
+        function listeyiCiz() {
+            listeKutusu.innerHTML = "";
+            playlist.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'sarki-item' + (index === mevcutIndex ? ' caliyor' : '');
+                
+                const durumSimgesi = item.url ? "🎵 " : "⚠️ ";
+                li.innerText = (index + 1) + ". " + durumSimgesi + item.name;
+                
+                li.onclick = () => {
+                    mevcutIndex = index;
+                    sarkiCal(mevcutIndex);
+                };
+                listeKutusu.appendChild(li);
+            });
+        }
+
+        function sarkiCal(index) {
+            if (playlist.length === 0) return;
+            
+            mevcutIndex = index;
+            const item = playlist[index];
+            
+            if (item.url) {
+                sesOynatici.src = item.url;
+                sarkiAdMetni.innerText = item.name;
+                listeyiCiz();
+                sesOynatici.play().catch(e => console.log("Oynatma başlatılamadı."));
+            } else {
+                sarkiAdMetni.innerText = "Müzik dosyası seçilmedi: " + item.name;
+                alert("Bu şarkının ses dosyası henüz seçilmedi. Lütfen 'Şarkı Ekle' butonundan bu şarkıyı cihazınızdan seçin.");
+            }
+        }
+
+        sesOynatici.addEventListener('ended', function() {
+            sonrakiSarki();
+        });
+
+        function muzikOynat() {
+            if (sesOynatici.src) sesOynatici.play();
+        }
+
+        function muzikDurdur() {
+            sesOynatici.pause();
+        }
+
+        function sonrakiSarki() {
+            if (playlist.length === 0) return;
+            if (mixModu) {
+                mevcutIndex = Math.floor(Math.random() * playlist.length);
+            } else {
+                mevcutIndex = (mevcutIndex + 1) % playlist.length;
+            }
+            sarkiCal(mevcutIndex);
+        }
+
+        function oncekiSarki() {
+            if (playlist.length === 0) return;
+            mevcutIndex = (mevcutIndex - 1 + playlist.length) % playlist.length;
+            sarkiCal(mevcutIndex);
+        }
+
+        function mixModuDegistir() {
+            mixModu = !mixModu;
+            mixBtn.innerText = mixModu ? "🔀 Mix: Açık" : "🔀 Mix: Kapalı";
+            mixBtn.classList.toggle("aktif", mixModu);
+        }
+
+        function sesSustur() {
+            sesOynatici.muted = !sesOynatici.muted;
+            sessizBtn.innerText = sesOynatici.muted ? "🔇 Sessiz" : "🔊 Ses Açık";
+        }
+
+        function listeyiKaydet() {
+            const isim = listeAdiInput.value.trim();
+            if (!isim) {
+                alert("Lütfen listenize bir isim verin!");
+                return;
+            }
+            if (playlist.length === 0) {
+                alert("Kaydetmek için önce şarkı eklemelisiniz!");
+                return;
+            }
+
+            const kayitIsimleri = playlist.map(item => item.name);
+            localStorage.setItem("kayitliListeAdi", isim);
+            localStorage.setItem("kayitliSarkilar", JSON.stringify(kayitIsimleri));
+
+            listeBaslikMetni.innerText = "📜 " + isim;
+            alert("'" + isim + "' listesi hafızaya kaydedildi!");
+        }
+
+        function kayitliListeyiYukle() {
+            const kayitliIsim = localStorage.getItem("kayitliListeAdi");
+            const kayitliSarkilar = localStorage.getItem("kayitliSarkilar");
+
+            if (kayitliIsim && kayitliSarkilar) {
+                listeBaslikMetni.innerText = "📜 " + kayitliIsim;
+                listeAdiInput.value = kayitliIsim;
+                const sarkiIsimleri = JSON.parse(kayitliSarkilar);
+                
+                playlist = sarkiIsimleri.map(name => ({ name: name, file: null, url: "" }));
+                listeyiCiz();
+            }
+        }
+
+        function listeyiIndir() {
+            const isim = listeAdiInput.value.trim() || "Playlistim";
+            if (playlist.length === 0) {
+                alert("İndirilecek liste boş!");
+                return;
+            }
+
+            const veri = {
+                isim: isim,
+                sarkilar: playlist.map(item => item.name)
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(veri));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", isim + ".json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        // Paylaşılabilir Davet Mesajı ve Link Üretme
+        function linkUret() {
+            const isim = listeAdiInput.value.trim() || "Playlistim";
+            if (playlist.length === 0) {
+                alert("Link üretmek için şarkı eklemelisiniz!");
+                return;
+            }
+
+            const veri = {
+                isim: isim,
+                sarkilar: playlist.map(item => item.name)
+            };
+
+            const jsonString = encodeURIComponent(JSON.stringify(veri));
+            const paylasimLink = window.location.origin + window.location.pathname + "?playlist=" + jsonString;
+
+            // İstediğin özel davet mesajı formatı
+            const davetMesaji = `Hey! Playlistimi görmek istermisin?\nLink: ${paylasimLink}`;
+
+            navigator.clipboard.writeText(davetMesaji).then(() => {
+                alert("Davet mesajı ve link kopyalandı! İstediğin kişiye yapıştırıp gönderebilirsin.");
+            }).catch(() => {
+                prompt("Mesajınız oluşturuldu, kopyalayabilirsiniz:", davetMesaji);
+            });
+        }
+    </script>
+
+</body>
+</html>
