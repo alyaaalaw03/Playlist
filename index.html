@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Tarayıcı Sekmesinde Yazan Başlık -->
     <title>Playlist</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">
     
+    <!-- Linkleri Sıkıştırmak için LZ-String Kütüphanesi -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -176,11 +178,9 @@
 <body>
 
     <div class="muzik-kutu">
-        <!-- Sayfanın Ortasındaki Başlık -->
         <h1>🌿 Playlist</h1>
         <div class="alt-baslik">Kendi Çalma Listeni Oluştur ve Paylaş</div>
         
-        <!-- Şarkı ve Liste Yükleme Butonları -->
         <div>
             <label for="muzikDosya" class="dosya-sec-btn">➕ Şarkı Ekle</label>
             <input type="file" id="muzikDosya" multiple>
@@ -193,7 +193,6 @@
 
         <audio id="sesOynatici"></audio>
 
-        <!-- Oynatma Kontrolleri -->
         <div class="kontrol-panel">
             <button onclick="oncekiSarki()">⏮️</button>
             <button onclick="muzikOynat()">▶️</button>
@@ -206,7 +205,6 @@
             <button onclick="sesSustur()" id="sessizBtn">🔊 Ses Açık</button>
         </div>
 
-        <!-- Çalma Listesi Alanı -->
         <div class="playlist-alani">
             <div class="playlist-baslik">
                 <span id="listeBaslikMetni">📜 Çalma Listem</span>
@@ -216,7 +214,6 @@
                 <li style="font-size: 12px; color: #a08c7d;">Lütfen müzik ekleyin...</li>
             </ul>
 
-            <!-- Kayıt, Dışa Aktar ve Paylaşım Alanı -->
             <div class="kayit-alani">
                 <div class="input-grup">
                     <input type="text" id="listeAdiInput" class="kayit-input" placeholder="Liste Adı (Örn: Favorilerim)">
@@ -247,29 +244,40 @@
         let mixModu = false;
 
         window.onload = function() {
-            // 1. Önce URL'den (link üzerinden) gelen liste var mı bak
             const urlParams = new URLSearchParams(window.location.search);
-            const urlData = urlParams.get('playlist');
+            const compressedData = urlParams.get('p');
+            const oldUrlData = urlParams.get('playlist');
 
-            if (urlData) {
+            // 1. Yeni Sıkıştırılmış Linkten Veriyi Oku
+            if (compressedData) {
                 try {
-                    const cozulmusData = JSON.parse(decodeURIComponent(urlData));
+                    const jsonStr = LZString.decompressFromEncodedURIComponent(compressedData);
+                    const cozulmusData = JSON.parse(jsonStr);
+                    listeBaslikMetni.innerText = "📜 " + cozulmusData.i;
+                    listeAdiInput.value = cozulmusData.i;
+                    playlist = cozulmusData.s.map(name => ({ name: name, file: null, url: "" }));
+                    listeyiCiz();
+                    alert("Link üzerinden '" + cozulmusData.i + "' listesi yüklendi! Lütfen kendi cihazınızdaki müzik dosyalarını ekleyin.");
+                    return;
+                } catch(e) {
+                    console.log("Sıkıştırılmış veri okunamadı.");
+                }
+            } 
+            // Eski uzun linklerle uyumluluk (varsa)
+            else if (oldUrlData) {
+                try {
+                    const cozulmusData = JSON.parse(decodeURIComponent(oldUrlData));
                     listeBaslikMetni.innerText = "📜 " + cozulmusData.isim;
                     listeAdiInput.value = cozulmusData.isim;
                     playlist = cozulmusData.sarkilar.map(name => ({ name: name, file: null, url: "" }));
                     listeyiCiz();
-                    alert("Link üzerinden '" + cozulmusData.isim + "' listesi yüklendi! Lütfen kendi cihazınızdaki müzik dosyalarını ekleyin.");
                     return;
-                } catch(e) {
-                    console.log("Link verisi okunamadı.");
-                }
+                } catch(e) {}
             }
 
-            // 2. Link yoksa yerel hafızadaki listeyi yükle
             kayitliListeyiYukle();
         };
 
-        // Dosya seçildiğinde listeye ekle
         dosyaGirdisi.addEventListener('change', function(e) {
             const yeniDosyalar = Array.from(e.target.files);
             
@@ -295,7 +303,6 @@
             }
         });
 
-        // Dışarıdan .json dosyası yüklendiğinde
         jsonYukleGirdisi.addEventListener('change', function(e) {
             const dosya = e.target.files[0];
             if (!dosya) return;
@@ -309,7 +316,7 @@
                         listeAdiInput.value = veri.isim;
                         playlist = veri.sarkilar.map(name => ({ name: name, file: null, url: "" }));
                         listeyiCiz();
-                        alert("'" + veri.isim + "' dosyası başarıyla yüklendi! Seslerin çalması için cihazınızdan ilgili MP3 dosyalarını ekleyebilirsiniz.");
+                        alert("'" + veri.isim + "' dosyası yüklendi! Seslerin çalması için cihazınızdan ilgili MP3 dosyalarını ekleyebilirsiniz.");
                     }
                 } catch(err) {
                     alert("Geçersiz liste dosyası!");
@@ -445,7 +452,7 @@
             downloadAnchor.remove();
         }
 
-        // Paylaşılabilir Davet Mesajı ve Link Üretme
+        // Akıllı Sıkıştırma Modu İle Kısa Link Üretme
         function linkUret() {
             const isim = listeAdiInput.value.trim() || "Playlistim";
             if (playlist.length === 0) {
@@ -453,19 +460,21 @@
                 return;
             }
 
-            const veri = {
-                isim: isim,
-                sarkilar: playlist.map(item => item.name)
+            // Verileri küçük anahtarlarla paketliyoruz (i: isim, s: sarkilar)
+            const miniVeri = {
+                i: isim,
+                s: playlist.map(item => item.name)
             };
 
-            const jsonString = encodeURIComponent(JSON.stringify(veri));
-            const paylasimLink = window.location.origin + window.location.pathname + "?playlist=" + jsonString;
+            // Metni LZ-String ile harf harf sıkıştırıyoruz
+            const jsonStr = JSON.stringify(miniVeri);
+            const compressedStr = LZString.compressToEncodedURIComponent(jsonStr);
 
-            // İstediğin özel davet mesajı formatı
+            const paylasimLink = window.location.origin + window.location.pathname + "?p=" + compressedStr;
             const davetMesaji = `Hey! Playlistimi görmek istermisin?\nLink: ${paylasimLink}`;
 
             navigator.clipboard.writeText(davetMesaji).then(() => {
-                alert("Davet mesajı ve link kopyalandı! İstediğin kişiye yapıştırıp gönderebilirsin.");
+                alert("Davet mesajı ve sıkıştırılmış kısa linkiniz kopyalandı!");
             }).catch(() => {
                 prompt("Mesajınız oluşturuldu, kopyalayabilirsiniz:", davetMesaji);
             });
