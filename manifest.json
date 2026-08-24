@@ -1,0 +1,17 @@
+{
+  "name": "Playlist Uygulaması",
+  "short_name": "Playlist",
+  "description": "Kendi müzik çalma listeni oluştur ve dinle.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f4efe6",
+  "theme_color": "#7c5c43",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
