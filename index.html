@@ -4,156 +4,233 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playlist</title>
-    
-    <!-- Kahverengi Arka Planlı 🌿 İkonları -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%237c5c43%22/><text y=%22.9em%22 font-size=%2280%22>🌿</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%237c5c43%22/><text y=%22.9em%22 font-size=%2280%22>🌿</text></svg>">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
-
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        :root {
+            --bg-color: #f4efe6;
+            --card-bg: #fdfbf7;
+            --border-color: #e2d7c5;
+            --text-main: #4a3e3d;
+            --text-title: #7c5c43;
+            --text-sub: #a08c7d;
+            --btn-bg: #e8dfd1;
+            --btn-active: #7c5c43;
+            --inner-bg: #f7f2e9;
         }
+
+        body.gece-modu {
+            --bg-color: #1e1b18;
+            --card-bg: #2a2421;
+            --border-color: #423732;
+            --text-main: #e6ded8;
+            --text-title: #d4a373;
+            --text-sub: #a08c7d;
+            --btn-bg: #3d332e;
+            --btn-active: #d4a373;
+            --inner-bg: #231e1b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
-            font-family: 'Quicksand', sans-serif;
-            background-color: #f4efe6;
-            color: #4a3e3d;
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            transition: 0.3s;
         }
+
         .muzik-kutu {
-            background: #fdfbf7;
-            border: 2px solid #e2d7c5;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
             padding: 25px;
             border-radius: 24px;
             width: 100%;
             max-width: 420px;
-            box-shadow: 0 10px 25px rgba(110, 89, 74, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
             text-align: center;
-            position: relative;
         }
-        h1 {
-            font-family: 'Caveat', cursive;
-            font-size: 42px;
-            color: #7c5c43;
+
+        .ust-ara-bar {
+            display: flex;
+            justify-content: flex-end;
             margin-bottom: 5px;
         }
+
+        .tema-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: var(--text-title);
+            margin-bottom: 2px;
+        }
+
         .alt-baslik {
             font-size: 13px;
-            color: #a08c7d;
+            color: var(--text-sub);
             margin-bottom: 15px;
         }
-        input[type="file"] {
-            display: none;
+
+        /* Dönen Plak Görseli */
+        .plak-kapsayici {
+            width: 110px;
+            height: 110px;
+            margin: 10px auto;
         }
-        .buton-grup {
+
+        .plak {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, #111 30%, #333 31%, #111 60%, #222 61%, #000 100%);
+            border: 4px solid var(--border-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             display: flex;
-            gap: 8px;
             justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
+            align-items: center;
+            animation: don 4s linear infinite;
+            animation-play-state: paused;
         }
+
+        .plak.donuyor {
+            animation-play-state: running;
+        }
+
+        .plak-orta {
+            width: 35px;
+            height: 35px;
+            background: var(--text-title);
+            border-radius: 50%;
+            border: 3px solid #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        @keyframes don {
+            100% { transform: rotate(360deg); }
+        }
+
+        input[type="file"] { display: none; }
+
         .dosya-sec-btn {
-            background: #8c6d53;
-            color: #fdfbf7;
-            padding: 10px 16px;
+            background: var(--text-title);
+            color: #fff;
+            padding: 9px 15px;
             border-radius: 16px;
             cursor: pointer;
             display: inline-block;
             font-weight: 600;
             font-size: 13px;
-            transition: 0.2s;
-            box-shadow: 0 4px 10px rgba(140, 109, 83, 0.2);
+            margin-bottom: 10px;
         }
-        .dosya-sec-btn:active {
-            transform: scale(0.98);
-            background: #735740;
-        }
+
         .su-anki-sarki {
-            font-family: 'Caveat', cursive;
-            font-size: 24px;
-            color: #5c4333;
-            margin: 15px 0;
-            min-height: 35px;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-title);
+            margin: 10px 0 5px 0;
+            min-height: 25px;
             word-break: break-word;
         }
+
+        .ilerleme-alani {
+            margin: 10px 0;
+        }
+
+        .sure-bilgi {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-top: 3px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--text-title);
+            cursor: pointer;
+        }
+
         .kontrol-panel {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
-            margin: 15px 0;
+            gap: 8px;
+            margin: 10px 0;
             flex-wrap: wrap;
         }
-        button {
-            background: #e8dfd1;
-            color: #5c4333;
+
+        button.btn {
+            background: var(--btn-bg);
+            color: var(--text-main);
             border: none;
-            padding: 10px 15px;
-            border-radius: 14px;
-            font-size: 14px;
+            padding: 9px 14px;
+            border-radius: 12px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
-            font-family: 'Quicksand', sans-serif;
         }
-        button:active {
-            background: #d4c5b3;
-        }
-        button.aktif {
-            background: #7c5c43;
+
+        button.btn.aktif {
+            background: var(--btn-active);
             color: white;
         }
+
         .playlist-alani {
-            margin-top: 20px;
+            margin-top: 15px;
             text-align: left;
-            background: #f7f2e9;
+            background: var(--inner-bg);
             padding: 15px;
             border-radius: 16px;
-            border: 1px solid #ebdccb;
+            border: 1px solid var(--border-color);
         }
+
         .playlist-baslik {
-            font-family: 'Caveat', cursive;
-            font-size: 26px;
-            color: #7c5c43;
-            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-title);
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+
         .sarki-listesi {
             list-style: none;
-            max-height: 180px;
+            max-height: 160px;
             overflow-y: auto;
         }
+
         .sarki-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 10px;
-            font-size: 13px;
-            border-radius: 10px;
-            margin-bottom: 5px;
-            background: #fff;
-            border: 1px solid #ebdccb;
-            color: #6e594a;
+            padding: 7px 10px;
+            font-size: 12px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
             cursor: pointer;
         }
+
         .sarki-item.caliyor {
-            background: #e2d7c5;
-            color: #3b2c23;
+            background: var(--btn-bg);
             font-weight: bold;
         }
+
         .sarki-bilgi {
             white-space: nowrap;
             overflow: hidden;
@@ -161,62 +238,25 @@
             flex: 1;
             margin-right: 10px;
         }
+
         .sarki-sil-btn {
             background: #d98282;
             color: white;
             border: none;
-            padding: 3px 7px;
+            padding: 2px 6px;
             border-radius: 6px;
-            font-size: 11px;
+            font-size: 10px;
             cursor: pointer;
         }
-        .kayit-alani {
-            margin-top: 15px;
-            display: flex;
-            gap: 8px;
-            flex-direction: column;
-        }
-        .input-grup {
-            display: flex;
-            gap: 8px;
-        }
-        .kayit-input {
-            flex: 1;
-            padding: 9px 12px;
-            border: 1px solid #e2d7c5;
-            border-radius: 12px;
-            font-family: 'Quicksand', sans-serif;
-            font-size: 13px;
-            outline: none;
-            background: #fff;
-        }
-        .paylasim-butonlari {
-            display: flex;
-            gap: 8px;
-            margin-top: 5px;
-            flex-wrap: wrap;
-        }
-        .paylasim-butonlari button {
-            flex: 1;
-            font-size: 12px;
-            padding: 9px;
-            background: #d3c4b1;
-        }
-        .temizle-btn {
-            background: #a35252 !important;
-            color: white !important;
-            font-size: 12px;
-            padding: 4px 10px;
-            border-radius: 10px;
-        }
+
         .site-footer {
-            margin-top: 15px;
+            margin-top: 12px;
             font-size: 11px;
-            color: #b09c8d;
+            color: var(--text-sub);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 1px dashed #e2d7c5;
+            border-top: 1px dashed var(--border-color);
             padding-top: 8px;
         }
     </style>
@@ -224,160 +264,112 @@
 <body>
 
     <div class="muzik-kutu">
+        <div class="ust-ara-bar">
+            <button class="tema-btn" id="temaBtn">🌙</button>
+        </div>
+
         <h1>🌿 Playlist</h1>
-        <div class="alt-baslik">Kendi Çalma Listeni Oluştur ve Paylaş</div>
+        <div class="alt-baslik">Kendi Çalma Listeni Oluştur</div>
+
+        <div class="plak-kapsayici">
+            <div class="plak" id="plakGorsel">
+                <div class="plak-orta">🎵</div>
+            </div>
+        </div>
         
-        <div class="buton-grup">
+        <div>
             <label for="muzikDosya" class="dosya-sec-btn">➕ Şarkı Ekle</label>
             <input type="file" id="muzikDosya" multiple accept="audio/*">
-
-            <label for="jsonYukle" class="dosya-sec-btn" style="background: #a08c7d;">📥 Liste Yükle</label>
-            <input type="file" id="jsonYukle" accept=".json">
         </div>
         
         <div class="su-anki-sarki" id="sarkiad">Henüz müzik seçilmedi</div>
 
+        <div class="ilerleme-alani">
+            <input type="range" id="ilerlemeCubugu" value="0" min="0" step="1">
+            <div class="sure-bilgi">
+                <span id="gecenSure">0:00</span>
+                <span id="toplamSure">0:00</span>
+            </div>
+        </div>
+
         <audio id="sesOynatici"></audio>
 
         <div class="kontrol-panel">
-            <button onclick="oncekiSarki()">⏮️</button>
-            <button onclick="muzikOynat()">▶️</button>
-            <button onclick="muzikDurdur()">⏸️</button>
-            <button onclick="sonrakiSarki()">⏭️</button>
+            <button class="btn" id="oncekiBtn">⏮️</button>
+            <button class="btn" id="playBtn">▶️</button>
+            <button class="btn" id="pauseBtn">⏸️</button>
+            <button class="btn" id="sonrakiBtn">⏭️</button>
         </div>
 
         <div class="kontrol-panel">
-            <button id="mixBtn" onclick="mixModuDegistir()">🔀 Mix: Kapalı</button>
-            <button onclick="sesSustur()" id="sessizBtn">🔊 Ses Açık</button>
+            <button class="btn" id="mixBtn">🔀 Mix: Kapalı</button>
+            <button class="btn" id="sessizBtn">🔊 Ses Açık</button>
         </div>
 
         <div class="playlist-alani">
             <div class="playlist-baslik">
-                <span id="listeBaslikMetni">📜 Çalma Listem</span>
-                <button class="temizle-btn" onclick="listeyiTemizle()">🗑️ Temizle</button>
+                <span>📜 Çalma Listesi</span>
+                <button class="sarki-sil-btn" id="temizleBtn">🗑️ Temizle</button>
             </div>
             
             <ul class="sarki-listesi" id="listeKutusu">
-                <li style="font-size: 13px; color: #a08c7d; text-align: center; padding: 10px;">Lütfen müzik ekleyin...</li>
+                <li style="font-size: 12px; color: var(--text-sub); text-align: center; padding: 10px;">Lütfen müzik ekleyin...</li>
             </ul>
-
-            <div class="kayit-alani">
-                <div class="input-grup">
-                    <input type="text" id="listeAdiInput" class="kayit-input" placeholder="Liste Adı (Örn: Favorilerim)">
-                    <button onclick="listeyiKaydet()" style="background: #8c6d53; color: white;">💾 Kaydet</button>
-                </div>
-
-                <div class="paylasim-butonlari">
-                    <button onclick="listeyiIndir()">📤 Listeyi İndir</button>
-                    <button onclick="linkUret()">🔗 Link Üret</button>
-                </div>
-            </div>
         </div>
 
         <div class="site-footer">
             <span>© @Alya Aalaw</span>
-            <span>v1.0.0</span>
+            <span>v1.3.1</span>
         </div>
     </div>
 
     <script>
+        // Eleman Tanımlamaları
         const dosyaGirdisi = document.getElementById('muzikDosya');
-        const jsonYukleGirdisi = document.getElementById('jsonYukle');
         const sesOynatici = document.getElementById('sesOynatici');
         const sarkiAdMetni = document.getElementById('sarkiad');
         const listeKutusu = document.getElementById('listeKutusu');
-        const listeBaslikMetni = document.getElementById('listeBaslikMetni');
-        const listeAdiInput = document.getElementById('listeAdiInput');
         const mixBtn = document.getElementById('mixBtn');
         const sessizBtn = document.getElementById('sessizBtn');
+        const plakGorsel = document.getElementById('plakGorsel');
+        const ilerlemeCubugu = document.getElementById('ilerlemeCubugu');
+        const gecenSureMetni = document.getElementById('gecenSure');
+        const toplamSureMetni = document.getElementById('toplamSure');
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const sonrakiBtn = document.getElementById('sonrakiBtn');
+        const oncekiBtn = document.getElementById('oncekiBtn');
+        const temizleBtn = document.getElementById('temizleBtn');
+        const temaBtn = document.getElementById('temaBtn');
 
         let playlist = [];
         let mevcutIndex = 0;
         let mixModu = false;
 
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const compressedData = urlParams.get('p');
-            const oldUrlData = urlParams.get('playlist');
-
-            if (compressedData) {
-                try {
-                    const jsonStr = LZString.decompressFromEncodedURIComponent(compressedData);
-                    const cozulmusData = JSON.parse(jsonStr);
-                    listeBaslikMetni.innerText = "📜 " + cozulmusData.i;
-                    listeAdiInput.value = cozulmusData.i;
-                    playlist = cozulmusData.s.map(name => ({ name: name, file: null, url: "" }));
-                    listeyiCiz();
-                    alert("Paylaşılan liste yüklendi! (Şarkı dosyalarını cihazınızdan tekrar eklemeniz gerekebilir)");
-                    return;
-                } catch(e) {
-                    console.log("Sıkıştırılmış veri okunamadı.");
-                }
-            } else if (oldUrlData) {
-                try {
-                    const cozulmusData = JSON.parse(decodeURIComponent(oldUrlData));
-                    listeBaslikMetni.innerText = "📜 " + cozulmusData.isim;
-                    listeAdiInput.value = cozulmusData.isim;
-                    playlist = cozulmusData.sarkilar.map(name => ({ name: name, file: null, url: "" }));
-                    listeyiCiz();
-                    return;
-                } catch(e) {}
-            }
-
-            kayitliListeyiYukle();
-        };
-
+        // Dosya Seçildiğinde
         dosyaGirdisi.addEventListener('change', function(e) {
             const yeniDosyalar = Array.from(e.target.files);
             
             yeniDosyalar.forEach(dosya => {
-                const mevcutSarki = playlist.find(p => p.name === dosya.name);
-                if (mevcutSarki) {
-                    mevcutSarki.file = dosya;
-                    mevcutSarki.url = URL.createObjectURL(dosya);
-                } else {
-                    playlist.push({
-                        name: dosya.name,
-                        file: dosya,
-                        url: URL.createObjectURL(dosya)
-                    });
-                }
+                playlist.push({
+                    name: dosya.name,
+                    url: URL.createObjectURL(dosya)
+                });
             });
 
             if (playlist.length > 0) {
                 listeyiCiz();
-                if (!sesOynatici.src && playlist[0].url) {
+                if (!sesOynatici.src) {
                     sarkiCal(0);
                 }
             }
         });
 
-        jsonYukleGirdisi.addEventListener('change', function(e) {
-            const dosya = e.target.files[0];
-            if (!dosya) return;
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                try {
-                    const veri = JSON.parse(event.target.result);
-                    if (veri.isim && veri.sarkilar) {
-                        listeBaslikMetni.innerText = "📜 " + veri.isim;
-                        listeAdiInput.value = veri.isim;
-                        playlist = veri.sarkilar.map(name => ({ name: name, file: null, url: "" }));
-                        listeyiCiz();
-                        alert("Liste dosyası başarıyla yüklendi!");
-                    }
-                } catch(err) {
-                    alert("Geçersiz liste dosyası!");
-                }
-            };
-            reader.readAsText(dosya);
-        });
-
+        // Listeyi Ekrana Yazma
         function listeyiCiz() {
             listeKutusu.innerHTML = "";
             if (playlist.length === 0) {
-                listeKutusu.innerHTML = '<li style="font-size: 13px; color: #a08c7d; text-align: center; padding: 10px;">Lütfen müzik ekleyin...</li>';
+                listeKutusu.innerHTML = '<li style="font-size: 12px; color: var(--text-sub); text-align: center; padding: 10px;">Lütfen müzik ekleyin...</li>';
                 sarkiAdMetni.innerText = "Henüz müzik seçilmedi";
                 return;
             }
@@ -387,11 +379,8 @@
                 
                 const bilgiDiv = document.createElement('div');
                 bilgiDiv.className = 'sarki-bilgi';
-                bilgiDiv.innerText = (index + 1) + ". " + (item.url ? "🎵 " : "⚠️ ") + item.name;
-                bilgiDiv.onclick = () => {
-                    mevcutIndex = index;
-                    sarkiCal(mevcutIndex);
-                };
+                bilgiDiv.innerText = (index + 1) + ". 🎵 " + item.name;
+                bilgiDiv.onclick = () => sarkiCal(index);
                 li.appendChild(bilgiDiv);
 
                 const silBtn = document.createElement('button');
@@ -407,38 +396,48 @@
             });
         }
 
+        // Şarkı Çalma
         function sarkiCal(index) {
             if (playlist.length === 0) return;
-            
             mevcutIndex = index;
             const item = playlist[index];
             
-            if (item.url) {
-                sesOynatici.src = item.url;
-                sarkiAdMetni.innerText = item.name;
-                listeyiCiz();
-                sesOynatici.play().catch(e => console.log("Oynatma başlatılamadı."));
-            } else {
-                sarkiAdMetni.innerText = "Seçilmedi: " + item.name;
-            }
+            sesOynatici.src = item.url;
+            sarkiAdMetni.innerText = item.name;
+            listeyiCiz();
+            
+            sesOynatici.play().then(() => {
+                plakGorsel.classList.add('donuyor');
+            }).catch(e => {
+                console.log("Oynatma engellendi: ", e);
+            });
         }
 
-        sesOynatici.addEventListener('ended', function() {
-            sonrakiSarki();
+        // Kontrol Butonları Dinleyicileri
+        playBtn.addEventListener('click', () => {
+            if (sesOynatici.src) {
+                sesOynatici.play();
+                plakGorsel.classList.add('donuyor');
+            }
         });
 
-        function muzikOynat() {
-            if (sesOynatici.src) sesOynatici.play();
-        }
-
-        function muzikDurdur() {
+        pauseBtn.addEventListener('click', () => {
             sesOynatici.pause();
-        }
+            plakGorsel.classList.remove('donuyor');
+        });
+
+        sonrakiBtn.addEventListener('click', sonrakiSarki);
+        oncekiBtn.addEventListener('click', oncekiSarki);
 
         function sonrakiSarki() {
             if (playlist.length === 0) return;
-            if (mixModu) {
-                mevcutIndex = Math.floor(Math.random() * playlist.length);
+            
+            if (mixModu && playlist.length > 1) {
+                let yeniIndex;
+                do {
+                    yeniIndex = Math.floor(Math.random() * playlist.length);
+                } while (yeniIndex === mevcutIndex);
+                mevcutIndex = yeniIndex;
             } else {
                 mevcutIndex = (mevcutIndex + 1) % playlist.length;
             }
@@ -451,25 +450,36 @@
             sarkiCal(mevcutIndex);
         }
 
-        function mixModuDegistir() {
+        // Şarkı Bittiğinde Otomatik Geçiş
+        sesOynatici.addEventListener('ended', sonrakiSarki);
+
+        // Mix Modu
+        mixBtn.addEventListener('click', () => {
             mixModu = !mixModu;
             mixBtn.innerText = mixModu ? "🔀 Mix: Açık" : "🔀 Mix: Kapalı";
             mixBtn.classList.toggle("aktif", mixModu);
-        }
+        });
 
-        function sesSustur() {
+        // Sessiz Modu
+        sessizBtn.addEventListener('click', () => {
             sesOynatici.muted = !sesOynatici.muted;
             sessizBtn.innerText = sesOynatici.muted ? "🔇 Sessiz" : "🔊 Ses Açık";
-        }
+        });
 
+        // Gece / Gündüz Modu
+        temaBtn.addEventListener('click', () => {
+            document.body.classList.toggle('gece-modu');
+        });
+
+        // Şarkı Silme
         function sarkiSil(index) {
             playlist.splice(index, 1);
             if (playlist.length === 0) {
                 sesOynatici.pause();
                 sesOynatici.src = "";
                 sarkiAdMetni.innerText = "Henüz müzik seçilmedi";
+                plakGorsel.classList.remove('donuyor');
             } else if (index === mevcutIndex) {
-                mevcutIndex = 0;
                 sarkiCal(0);
             } else if (index < mevcutIndex) {
                 mevcutIndex--;
@@ -477,88 +487,36 @@
             listeyiCiz();
         }
 
-        function listeyiKaydet() {
-            const isim = listeAdiInput.value.trim();
-            if (!isim) {
-                alert("Lütfen listenize bir isim verin!");
-                return;
-            }
-            if (playlist.length === 0) {
-                alert("Kaydetmek için önce şarkı eklemelisiniz!");
-                return;
-            }
+        // Listeyi Temizle
+        temizleBtn.addEventListener('click', () => {
+            playlist = [];
+            mevcutIndex = 0;
+            sesOynatici.pause();
+            sesOynatici.src = "";
+            sarkiAdMetni.innerText = "Henüz müzik seçilmedi";
+            plakGorsel.classList.remove('donuyor');
+            listeyiCiz();
+        });
 
-            const kayitIsimleri = playlist.map(item => item.name);
-            localStorage.setItem("kayitliListeAdi", isim);
-            localStorage.setItem("kayitliSarkilar", JSON.stringify(kayitIsimleri));
+        // Zaman ve İlerleme Çubuğu Güncelleme
+        sesOynatici.addEventListener('timeupdate', () => {
+            if (sesOynatici.duration) {
+                ilerlemeCubugu.max = Math.floor(sesOynatici.duration);
+                ilerlemeCubugu.value = Math.floor(sesOynatici.currentTime);
+                gecenSureMetni.innerText = zamanFormatla(sesOynatici.currentTime);
+                toplamSureMetni.innerText = zamanFormatla(sesOynatici.duration);
+            }
+        });
 
-            listeBaslikMetni.innerText = "📜 " + isim;
-            alert("'" + isim + "' listesi hafızaya kaydedildi!");
+        ilerlemeCubugu.addEventListener('input', (e) => {
+            sesOynatici.currentTime = e.target.value;
+        });
+
+        function zamanFormatla(saniye) {
+            const dk = Math.floor(saniye / 60);
+            const sn = Math.floor(saniye % 60);
+            return dk + ":" + (sn < 10 ? "0" : "") + sn;
         }
-
-        function kayitliListeyiYukle() {
-            const kayitliIsim = localStorage.getItem("kayitliListeAdi");
-            const kayitliSarkilar = localStorage.getItem("kayitliSarkilar");
-
-            if (kayitliIsim && kayitliSarkilar) {
-                listeBaslikMetni.innerText = "📜 " + kayitliIsim;
-                listeAdiInput.value = kayitliIsim;
-                const sarkiIsimleri = JSON.parse(kayitliSarkilar);
-                
-                playlist = sarkiIsimleri.map(name => ({ name: name, file: null, url: "" }));
-                listeyiCiz();
-            }
-        }
-
-        function listeyiIndir() {
-            const isim = listeAdiInput.value.trim() || "Playlistim";
-            if (playlist.length === 0) {
-                alert("İndirilecek liste boş!");
-                return;
-            }
-
-            const veri = {
-                isim: isim,
-                sarkilar: playlist.map(item => item.name)
-            };
-
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(veri));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", isim + ".json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
-
-        function listeyiTemizle() {
-            if (confirm("Çalma listesini temizlemek istediğinize emin misiniz?")) {
-                playlist = [];
-                mevcutIndex = 0;
-                sesOynatici.pause();
-                sesOynatici.src = "";
-                listeAdiInput.value = "";
-                listeBaslikMetni.innerText = "📜 Çalma Listem";
-                localStorage.removeItem("kayitliListeAdi");
-                localStorage.removeItem("kayitliSarkilar");
-                listeyiCiz();
-            }
-        }
-
-        function linkUret() {
-            const isim = listeAdiInput.value.trim() || "Playlistim";
-            if (playlist.length === 0) {
-                alert("Link üretmek için şarkı eklemelisiniz!");
-                return;
-            }
-
-            const miniVeri = {
-                i: isim,
-                s: playlist.map(item => item.name)
-            };
-
-            const jsonStr = JSON.stringify(miniVeri);
-            const compressedStr = LZString.compressToEncodedURIComponent(jsonStr);
-
-            const paylasimLink = window.location.origin + window.location.pathname + "?p=" + compressedStr;
-            const davetMesaji = `Hey! Playlistimi görmek istermi
+    </script>
+</body>
+</html>
