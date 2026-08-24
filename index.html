@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playlist</title>
+    
+    <!-- PWA Manifest Bağlantısı -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#7c5c43">
+
+    <!-- Uygulama İkonları -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%237c5c43%22/><text y=%22.9em%22 font-size=%2280%22>🌿</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%237c5c43%22/><text y=%22.9em%22 font-size=%2280%22>🌿</text></svg>">
+
     <style>
         :root {
             --bg-color: #f4efe6;
@@ -319,12 +328,11 @@
 
         <div class="site-footer">
             <span>© @Alya Aalaw</span>
-            <span>v1.3.1</span>
+            <span>v1.3.2</span>
         </div>
     </div>
 
     <script>
-        // Eleman Tanımlamaları
         const dosyaGirdisi = document.getElementById('muzikDosya');
         const sesOynatici = document.getElementById('sesOynatici');
         const sarkiAdMetni = document.getElementById('sarkiad');
@@ -346,7 +354,6 @@
         let mevcutIndex = 0;
         let mixModu = false;
 
-        // Dosya Seçildiğinde
         dosyaGirdisi.addEventListener('change', function(e) {
             const yeniDosyalar = Array.from(e.target.files);
             
@@ -365,7 +372,6 @@
             }
         });
 
-        // Listeyi Ekrana Yazma
         function listeyiCiz() {
             listeKutusu.innerHTML = "";
             if (playlist.length === 0) {
@@ -396,7 +402,6 @@
             });
         }
 
-        // Şarkı Çalma
         function sarkiCal(index) {
             if (playlist.length === 0) return;
             mevcutIndex = index;
@@ -413,7 +418,6 @@
             });
         }
 
-        // Kontrol Butonları Dinleyicileri
         playBtn.addEventListener('click', () => {
             if (sesOynatici.src) {
                 sesOynatici.play();
@@ -450,28 +454,23 @@
             sarkiCal(mevcutIndex);
         }
 
-        // Şarkı Bittiğinde Otomatik Geçiş
         sesOynatici.addEventListener('ended', sonrakiSarki);
 
-        // Mix Modu
         mixBtn.addEventListener('click', () => {
             mixModu = !mixModu;
             mixBtn.innerText = mixModu ? "🔀 Mix: Açık" : "🔀 Mix: Kapalı";
             mixBtn.classList.toggle("aktif", mixModu);
         });
 
-        // Sessiz Modu
         sessizBtn.addEventListener('click', () => {
             sesOynatici.muted = !sesOynatici.muted;
             sessizBtn.innerText = sesOynatici.muted ? "🔇 Sessiz" : "🔊 Ses Açık";
         });
 
-        // Gece / Gündüz Modu
         temaBtn.addEventListener('click', () => {
             document.body.classList.toggle('gece-modu');
         });
 
-        // Şarkı Silme
         function sarkiSil(index) {
             playlist.splice(index, 1);
             if (playlist.length === 0) {
@@ -487,7 +486,6 @@
             listeyiCiz();
         }
 
-        // Listeyi Temizle
         temizleBtn.addEventListener('click', () => {
             playlist = [];
             mevcutIndex = 0;
@@ -498,7 +496,6 @@
             listeyiCiz();
         });
 
-        // Zaman ve İlerleme Çubuğu Güncelleme
         sesOynatici.addEventListener('timeupdate', () => {
             if (sesOynatici.duration) {
                 ilerlemeCubugu.max = Math.floor(sesOynatici.duration);
