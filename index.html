@@ -311,15 +311,29 @@
         </div>
 
         <div class="kontrol-panel">
-            <button class="btn" id="mixBtn">🔀 Mix: Kapalı</button>
-            <button class="btn" id="sessizBtn">🔊 Ses Açık</button>
-        </div>
+    <button class="btn" id="mixBtn">🔀 Mix: Kapalı</button>
+    <button class="btn" id="tekrarBtn">🔁 Tekrar: Kapalı</button>
+    <button class="btn" id="sessizBtn">🔊 Ses Açık</button>
+</div>
 
         <div class="playlist-alani">
             <div class="playlist-baslik">
                 <span>📜 Çalma Listesi</span>
                 <button class="sarki-sil-btn" id="temizleBtn">🗑️ Temizle</button>
             </div>
+<input
+type="text"
+id="aramaKutusu"
+placeholder="🔍 Şarkı Ara..."
+style="
+width:100%;
+padding:8px;
+margin-bottom:10px;
+border-radius:10px;
+border:1px solid var(--border-color);
+background:var(--card-bg);
+color:var(--text-main);
+">
             
             <ul class="sarki-listesi" id="listeKutusu">
                 <li style="font-size: 12px; color: var(--text-sub); text-align: center; padding: 10px;">Lütfen müzik ekleyin...</li>
@@ -349,10 +363,14 @@
         const oncekiBtn = document.getElementById('oncekiBtn');
         const temizleBtn = document.getElementById('temizleBtn');
         const temaBtn = document.getElementById('temaBtn');
+const tekrarBtn = document.getElementById('tekrarBtn');
+const aramaKutusu = document.getElementById('aramaKutusu');
 
         let playlist = [];
         let mevcutIndex = 0;
         let mixModu = false;
+let tekliTekrar = false;
+let filtreMetni = "";
 
         dosyaGirdisi.addEventListener('change', function(e) {
             const yeniDosyalar = Array.from(e.target.files);
@@ -380,6 +398,14 @@
                 return;
             }
             playlist.forEach((item, index) => {
+if (
+    filtreMetni &&
+    !item.name.toLowerCase().includes(
+        filtreMetni.toLowerCase()
+    )
+){
+    return;
+}
                 const li = document.createElement('li');
                 li.className = 'sarki-item' + (index === mevcutIndex ? ' caliyor' : '');
                 
@@ -454,7 +480,20 @@
             sarkiCal(mevcutIndex);
         }
 
-        sesOynatici.addEventListener('ended', sonrakiSarki);
+        sesOynatici.addEventListener('ended', () => {
+
+    if (tekliTekrar) {
+
+        sesOynatici.currentTime = 0;
+        sesOynatici.play();
+
+    } else {
+
+        sonrakiSarki();
+
+    }
+
+});
 
         mixBtn.addEventListener('click', () => {
             mixModu = !mixModu;
@@ -508,7 +547,27 @@
         ilerlemeCubugu.addEventListener('input', (e) => {
             sesOynatici.currentTime = e.target.value;
         });
+aramaKutusu.addEventListener("input", (e)=>{
 
+    filtreMetni = e.target.value;
+
+    listeyiCiz();
+
+});tekrarBtn.addEventListener("click", ()=>{
+
+    tekliTekrar = !tekliTekrar;
+
+    tekrarBtn.innerText =
+        tekliTekrar
+        ? "🔁 Tekrar: Açık"
+        : "🔁 Tekrar: Kapalı";
+
+    tekrarBtn.classList.toggle(
+        "aktif",
+        tekliTekrar
+    );
+
+});
         function zamanFormatla(saniye) {
             const dk = Math.floor(saniye / 60);
             const sn = Math.floor(saniye % 60);
